@@ -1,0 +1,19 @@
+{
+    "SCROLL_ID": "folded001",
+    "FOLDER_PATH_SLICES": "/run/media/petr/CT-OCR-2022/folded001/folded001.rec_3429",
+    "SCALE_300DPI": 9.55,
+    "FLIP_VERT_UNFOLDING_BOOL": false,
+    "FLIP_HORI_UNFOLDING_BOOL": true,
+    "ROTATE_90_UNFOLDING_BOOL": true,
+    "FILE_PATH_NUM_PATH": "num_slices.txt",
+    "FILE_PATH_SCAN": "scans/folded001.scan.png",
+    "FILE_PATH_SCAN_3D": "scans/folded001.scan.3d.txt",
+    "FILE_PATH_NN_WEIGHTS": "NN_python/epoch=289-val_all=0.00989016.ckpt",
+    "NN_INFERENCE_DEVICE": "gpu",
+    "NN_INFERENCE_MEMORY_Mb": 8000,
+    "FOLDER_PATH_MASK": "../folded001_mask",
+    "FOLDER_PATH_FINAL": "../folded001_results",
+    "WRITE_UNNECESSARY_DETAILS": false,
+    "FOLDER_PATH_DETAILS": "../folded001_details",
+    "FOLDER_PATH_NOISE_MASK": "folded001_noise_mask"
+}

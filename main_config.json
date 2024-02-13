@@ -1,0 +1,18 @@
+{
+    "SCROLL_ID": "scroll001",
+    "FOLDER_PATH_SLICES": "/run/media/petr/CT-OCR-2022/scroll001/scroll001.rec_1150",
+    "SCALE_300DPI": 9.55,
+    "FLIP_VERT_UNFOLDING_BOOL": false,
+    "FLIP_HORI_UNFOLDING_BOOL": true,
+    "ROTATE_90_UNFOLDING_BOOL": false,
+    "FILE_PATH_NUM_PATH": "num_slices.txt",
+    "FILE_PATH_SCAN": "scans/scroll001.scan.png",
+    "FILE_PATH_SCAN_3D": "scans/scroll001.scan.3d.txt",
+    "FILE_PATH_NN_WEIGHTS": "NN_python/epoch=289-val_all=0.00989016.ckpt",
+    "NN_INFERENCE_DEVICE": "gpu",
+    "NN_INFERENCE_MEMORY_Mb": 10000,
+    "FOLDER_PATH_MASK": "../scroll001_mask", 
+    "FOLDER_PATH_FINAL": "../scroll001_results",
+    "WRITE_UNNECESSARY_DETAILS": true,
+    "FOLDER_PATH_DETAILS": "../scroll001_details"
+}                     

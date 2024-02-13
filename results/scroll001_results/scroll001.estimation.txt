@@ -1,0 +1,4 @@
+Global distortion: 1.056
+Mean dif: 0.106 mm
+50%-quantile: 0.098 mm
+80%-quantile: 0.15 mm

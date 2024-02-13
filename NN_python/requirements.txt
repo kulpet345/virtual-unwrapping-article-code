@@ -1,0 +1,14 @@
+pytorch_lightning
+torch
+numpy
+opencv-python
+tifffile
+torchvision
+tqdm
+tensorboardX
+tensorboard
+cuda-python
+bresenham
+opencv-python
+matplotlib
+Pillow

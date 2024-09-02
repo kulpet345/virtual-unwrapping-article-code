@@ -97,3 +97,31 @@ To fully reproduce the results, it is necessary to allocate at least 19 GB of ad
 | folded002 | 6000 Mb | 5.0 Gb | 75.9 Gb |
 
 
+## Citation
+
+If you use the code of our paper for scientific research, please consider citing
+
+
+```latex
+@inproceedings{polevoy2023tomographic,
+  title={From tomographic reconstruction to automatic text recognition: the next frontier task for the artificial intelligence},
+  author={Polevoy, DV and Kulagin, PA and Ingacheva, AS and Soldatova, Zh V and Chukalina, MV and Nikolaev, DP and Arlazarov, VV},
+  booktitle={Fifteenth International Conference on Machine Vision (ICMV 2022)},
+  volume={12701},
+  pages={202--212},
+  year={2023},
+  organization={SPIE}
+}
+```
+
+
+```latex
+Petr Kulagin, Dmitry Polevoy, Marina Chukalina, Dmitry Nikolaev, Vladimir V. Arlazarov
+"Fully automatic virtual unwrapping method for documents imaged by X-ray tomography"
+
+To be published in proceedings
+Eighteenth International Conference on Document Analysis and Recognition (ICDAR 2024)
+```
+
+
+

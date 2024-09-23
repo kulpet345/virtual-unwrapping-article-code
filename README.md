@@ -110,17 +110,25 @@ If you use the code of our paper for scientific research, please consider citing
   volume={12701},
   pages={202--212},
   year={2023},
-  organization={SPIE}
+  organization={SPIE},
+  doi={10.1117/12.2680132}
 }
 ```
 
 
 ```latex
-Petr Kulagin, Dmitry Polevoy, Marina Chukalina, Dmitry Nikolaev, Vladimir V. Arlazarov
-"Fully automatic virtual unwrapping method for documents imaged by X-ray tomography"
-
-To be published in proceedings
-Eighteenth International Conference on Document Analysis and Recognition (ICDAR 2024)
+@inproceedings{10.1007/978-3-031-70543-4_14,
+  author={Kulagin, Petr and Polevoy, Dmitry and Chukalina, Marina and Nikolaev, Dmitry and Arlazarov, Vladimir V.},
+  editor={Barney Smith, Elisa H. and Liwicki, Marcus and Peng, Liangrui},
+  title={Fully Automatic Virtual Unwrapping Method for Documents Imaged by X-Ray Tomography},
+  booktitle={Document Analysis and Recognition - ICDAR 2024},
+  year={2024},
+  publisher={Springer Nature Switzerland},
+  address={Cham},
+  pages={233--250},
+  isbn={978-3-031-70543-4},
+  doi={10.1007/978-3-031-70543-4_14}
+}
 ```
 
 

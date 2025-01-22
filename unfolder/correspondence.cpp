@@ -1,10 +1,5 @@
 #include "correspondence.h"
 
-//void build_rec_correspondence_from_scan(std::string scan_pt_3d_path,
-//                                        std::string line_pts_full_path,
-//                                        std::string out_rec_pt_3d_path,
-//                                        int st_num, int fin_num, int step,
-//                                        double downscale) {
 void build_rec_correspondence_from_scan(std::string scan_pt_3d_path, std::string final_path, std::string details_path,
                                       std::string scroll_id,
                                       int st_idx, int fin_idx, double downscale, std::vector<int> nums, int slice_count) {
@@ -44,7 +39,6 @@ void build_rec_correspondence_from_scan(std::string scan_pt_3d_path, std::string
         for (int j = nums[i]; j <= nums[i + 1] - 1; ++j) {
           cv::Point3d pt_3d_near{x + (x_next - x) / (nums[i + 1] - nums[i]) * (j - nums[i]),
                                  y + (y_next - y) / (nums[i + 1] - nums[i]) * (j - nums[i]), j};
-          //std::cout << j << std::endl;
           for (int num = 0; num < vec_pt.size(); ++num) {
             auto pt3 = vec_pt_3d[num];
             if (cv::norm(pt_3d_near - pt3) < mn_dst[num]) {

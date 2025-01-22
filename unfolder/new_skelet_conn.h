@@ -5,10 +5,8 @@
 static struct SkeletConnParams {
   int norm_len = 5;
   int step = 10;
-  // int st_num = 651;
   int st_num = 10;
   int fin_num = 2676;
-  // int dif = 0;
   int long_path = 15;
   int long_dist = 100;
   int long_path_cont = 100;
@@ -81,14 +79,7 @@ void texturing_operation(cv::Mat &fst_img, cv::Mat &sec_img,
                          int slice_num, std::vector<cv::Point2d> &fst_path,
                          bool debug, std::string raw_path,
                          std::string out_path, const std::set<int>& nums, std::string scroll_id);
-/*
-void load_from_checkpoint(int &i, int &checkpoint_num, std::string nm,
-                          std::vector<cv::Point2d> &pred_pts,
-                          std::vector<cv::Point> &pred_pts_raw,
-                          double &tot_dist, std::vector<cv::Point> &big_path,
-                          std::string out_path, cv::Mat &fst_img,
-                          cv::Mat &sec_img);
-*/
+
 std::vector<std::vector<double>>
 calc_pref_dist(std::vector<std::vector<cv::Point>> &paths);
 

@@ -23,7 +23,6 @@ void delete_big_cycles(cv::Mat &skelet, FindCompResult &comp_res, bool begin) {
       if (cycle1[k].size() < scroll_const.big_cycle_begin && begin ||
           cycle1[k].size() < scroll_const.big_cycle_middle && !begin) {
         for (auto el : cycle1[k]) {
-          // std::cout << "cycle el " << el.x << ' ' << el.y << std::endl;
           skelet.at<uint8_t>(el.x, el.y) = 0;
         }
       }
@@ -552,12 +551,6 @@ bool CompSkeletsBackups::operator()(PathPos p1, PathPos p2) {
 
 void draw_result_st(cv::Mat &img, std::vector<cv::Point> &big_path,
                     std::string out_path, int st_num, std::string scroll_id) {
-  //cv::Mat path_im = cv::Mat::zeros(img.size[0], img.size[1], CV_8UC1);
-  //for (int i = 0; i < big_path.size(); ++i) {
-  //  path_im.at<uint8_t>(big_path[i].x, big_path[i].y) = 100 + i / 150;
-  //}
-  //cv::imwrite(out_path + "path" + std::to_string(st_num) + ".png",
-  //            path_im);
   cv::Mat path_im_raw = cv::Mat::zeros(img.size[0], img.size[1], CV_8UC1);
   for (int i = 0; i < big_path.size(); ++i) {
     path_im_raw.at<uint8_t>(big_path[i].x, big_path[i].y) =
@@ -565,9 +558,6 @@ void draw_result_st(cv::Mat &img, std::vector<cv::Point> &big_path,
   }
   cv::imwrite(std::filesystem::path(out_path) / (scroll_id + "." + get_num(st_num) + "_raw.png"),
             path_im_raw);
-  //cv::imwrite(std::filesystem::path(out_path) / ("path_raw" + get_num(st_num) +
-  //                ".png"),
-  //            path_im_raw);
 }
 
 void write_pred_pts(std::vector<cv::Point2d> &pred_pts,
@@ -597,9 +587,7 @@ void texturing_operation(cv::Mat &fst_img, cv::Mat &sec_img,
                          std::string scroll_id) {
   auto raw = read_tif(raw_path, 64);
   cv::Mat set_p = cv::Mat::zeros(raw.size[0], raw.size[1], CV_8UC1);
-  //cv::Mat set_p1 = cv::Mat::zeros(img.size[0], img.size[1], CV_8UC1);
   cv::Mat set_q = cv::Mat::zeros(raw.size[0], raw.size[1], CV_8UC1);
-  //cv::Mat set_q1 = cv::Mat::zeros(img.size[0], img.size[1], CV_8UC1);
   for (int i = 1; i < fst_path.size(); ++i) {
     cv::Point2d pt1 = fst_path[i];
     cv::Point2d pt2 = fst_path[i - 1];
@@ -623,7 +611,6 @@ void texturing_operation(cv::Mat &fst_img, cv::Mat &sec_img,
       qt.y = it.pos().y;
       if (debug) {
         set_p.at<uint8_t>(qt.x, qt.y) = 255;
-        //set_p1.at<uint8_t>(qt.x + lx, qt.y + ly) = 255;
       }
       val1 = std::max(val1, raw.at<double>(qt.x, qt.y));
     }
@@ -639,112 +626,20 @@ void texturing_operation(cv::Mat &fst_img, cv::Mat &sec_img,
       qt.y = it1.pos().y;
       if (debug) {
         set_q.at<uint8_t>(qt.x, qt.y) = 255;
-        //set_q1.at<uint8_t>(qt.x + lx, qt.y + ly) = 255;
       }
       val2 = std::max(val2, raw.at<double>(qt.x, qt.y));
     }
     fst_img.at<double>(slice_num, i - 1) = val1;
     sec_img.at<double>(slice_num, i - 1) = val2;
   }
-  //if (k == scroll_const.st_num || k % scroll_const.step == 1) {
   if (nums.count(slice_num)) {
     if (debug) {
       cv::imwrite(std::filesystem::path(out_path) / (scroll_id + ".1." + get_num(slice_num) + "_norm.png"), set_p);
       cv::imwrite(std::filesystem::path(out_path) / (scroll_id + ".2." + get_num(slice_num) + "_norm.png"), set_q);
-      //cv::imwrite(out_path + "set" + std::to_string(k) + "_1.png", set_p1);
-      //cv::imwrite(out_path + "set_q" + std::to_string(k) + "_1.png", set_q1);
     }
   }
 }
 
-/*
-void rec_imgs(std::string out_path) {
-  std::ifstream in1(out_path + "pred_pts" + std::to_string(10) + ".txt");
-  cv::Point2d pt1;
-  std::vector<cv::Point2d> vec_pt1;
-  while (in1 >> pt1.x >> pt1.y) {
-    vec_pt1.push_back(pt1);
-  }
-  cv::Mat fst_img = cv::Mat::zeros(2687, vec_pt1.size(), CV_64FC1);
-  cv::Mat sec_img = cv::Mat::zeros(2687, vec_pt1.size(), CV_64FC1);
-
-  for (int i = 0; i <= 10; ++i) {
-
-    texturing_operation(
-        fst_img, sec_img,
-        "/media/petr/TOSHIBA EXT/tomo_data/folded001.rec_3429/VENL", i, vec_pt1,
-        fst_img, false, ScrollType::folded001, "folded001", out_path, 27, 27);
-  }
-
-  for (int i = 11; i <= 2631; i += 10) {
-    std::cout << i << std::endl;
-    std::ifstream in(out_path + "pred_pts" + std::to_string(i) + ".txt");
-    cv::Point2d pt;
-    std::vector<cv::Point2d> vec_pt;
-    while (in >> pt.x >> pt.y) {
-      vec_pt.push_back(pt);
-    }
-    for (int j = i; j <= std::min(i + 9, 2686); ++j) {
-      texturing_operation(
-          fst_img, sec_img,
-          "/media/petr/TOSHIBA EXT/tomo_data/folded001.rec_3429/VENL", j,
-          vec_pt, fst_img, false, ScrollType::folded001, "folded001", out_path,
-          27, 27);
-    }
-    for (int j = i; j <= 2686; ++j) {
-      texturing_operation(
-          fst_img, sec_img,
-          "/media/petr/TOSHIBA EXT/tomo_data/folded001.rec_3429/VENL", j,
-          vec_pt, fst_img, false, ScrollType::folded001, "folded001", out_path,
-          27, 27);
-    }
-  }
-
-  cv::imwrite(out_path + "newp_fst_img_10_2631.png", image_to_int(fst_img));
-  cv::imwrite(out_path + "newp_sec_img_10_2631.png", image_to_int(sec_img));
-}
-
-
-/*
-void load_from_checkpoint(int &i, int &checkpoint_num, std::string nm,
-                          std::vector<cv::Point2d> &pred_pts,
-                          std::vector<cv::Point> &pred_pts_raw,
-                          double &tot_dist, std::vector<cv::Point> &big_path,
-                          std::string out_path, cv::Mat &fst_img,
-                          cv::Mat &sec_img) {
-
-  i = checkpoint_num;
-  if (checkpoint_num % 40 == 1) {
-    fst_img = cv::imread(out_path + "fst_img_" +
-                         std::to_string(checkpoint_num - 40) + ".png");
-    sec_img = cv::imread(out_path + "sec_img_" +
-                         std::to_string(checkpoint_num - 40) + ".png");
-    i -= 40;
-  }
-
-  std::ifstream in_pred_pts(out_path + "pred_pts" + std::to_string(i - 10) +
-                            ".txt");
-  std::ifstream in_pred_pts_raw(out_path + "pred_pts_raw" +
-                                std::to_string(i - 10) + ".txt");
-  pred_pts.clear();
-  pred_pts_raw.clear();
-  cv::Point2d pt_db;
-  cv::Point pt;
-  while (in_pred_pts >> pt_db.x) {
-    in_pred_pts >> pt_db.y;
-    pred_pts.push_back(pt_db);
-  }
-
-  while (in_pred_pts_raw >> pt.x) {
-    in_pred_pts_raw >> pt.y;
-    pred_pts_raw.push_back(pt);
-  }
-
-  tot_dist = 0;
-  big_path = pred_pts_raw;
-  checkpoint_num = 0;
-}
-*/
 
 std::vector<std::vector<double>>
 calc_pref_dist(std::vector<std::vector<cv::Point>> &paths) {
@@ -890,10 +785,7 @@ bool case_mid_nearest(std::vector<std::vector<cv::Point>> &paths,
 
 void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_order,
                     std::string out_path_details, std::vector<std::string> mask_paths, std::vector<int> nums, int& st_idx, int fin_idx,
-                    int slice_count, std::string scroll_id) {//const SkeletConnInterfaceParams &params) {
-  //std::string scr_name = nm;//params.raw_path;
-  //int checkpoint_num = params.checkpoint_num;
-  //int prev_checkpoint_num = checkpoint_num;
+                    int slice_count, std::string scroll_id) {
   bool seg_st = false;
   int st_num, fin_num;
   int prev_write;
@@ -920,46 +812,6 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
     prev_write = -1;
 
     std::cout << "Start skelet conn algorithm" << std::endl;
-  //bool debug = params.debug;
-  //bool swap_order = params.swap_order;
-  //std::string nm;
-  //ScrollType tp = params.tp;
-  //std::string out_path = params.out_path;
-  //int step = params.step;
-  //std::string mask_path = params.mask_path;
-  /*
-  switch (tp) {
-  case scroll001:
-    nm = "scroll001";
-    scroll_const.st_num = 10;
-    break;
-  case scroll002:
-    nm = "scroll002";
-    scroll_const.st_num = 21;
-    break;
-  case scroll003:
-    nm = "scroll003";
-    scroll_const.st_num = 10;
-    break;
-  case scroll004:
-    nm = "scroll004";
-    scroll_const.st_num = 11;
-    break;
-  case folded001:
-    nm = "folded001";
-    break;
-  case folded002:
-    nm = "folded002";
-    scroll_const.st_num = 10;
-    break;
-  }
-  */
-  //int st_num = params.st_num;
-  //int fin_num = params.fin_num;
-  //scroll_const.fin_num = params.fin_num;
-
-  //int add_mask_num = 0;
-
 
     cv::Mat img = cv::imread(mask_paths[st_idx],
                    cv::IMREAD_GRAYSCALE);
@@ -1023,9 +875,6 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
         break;
       }
 
-    /*auto raw = image_to_int(
-        read_tif(raw_paths[0], 64));*/
-
     st_slice_choose_best_cand(idx_pos, paths, big_path, raw, us_pth);
   }
 
@@ -1046,7 +895,6 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
     continue;
   }
 
-  //int samples_count = 0;
   double dst = 0;
   double tot_dist = 0;
   for (int i = 1; i < big_path.size(); ++i) {
@@ -1059,26 +907,14 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
     draw_result_st(img, big_path, out_path_details, st_num, scroll_id);
   }
 
-  //cv::Mat fst_img;
-  //cv::Mat sec_img;
   std::vector<double> prev_idx;
   std::vector<cv::Point2d> prev_path;
-
-  //fst_img = cv::Mat::zeros(slice_count, samples_count, CV_64FC1);
-  //sec_img = cv::Mat::zeros(slice_count, samples_count, CV_64FC1);
 
   std::vector<cv::Point2d> fst_path;
   int prev_sz = 0;
 
   fst_path = uniform_sampling(big_path, samples_count);
   fst_path = gaus_smooth(fst_path);
-
-
-
-
-  //auto pred_pts = fst_path;
-  //auto pred_pts_raw = big_path;
-  //auto pred_tot_dist = tot_dist;
 
   pred_pts = fst_path;
   pred_pts_raw = big_path;
@@ -1112,9 +948,6 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
                          debug, raw_paths[k],
                          out_path_details, set_nums, scroll_id);
 
-    //texturing_operation(fst_img, sec_img, k, fst_path, img, debug,
-    //                    out_path_details, set_nums);
-
     std::cout << "End texture" << std::endl;
   }
   for (int k = st_num; k < nums[st_idx + 1]; ++k) {
@@ -1123,9 +956,6 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
                          k, fst_path,
                          debug, raw_paths[k],
                          out_path_details, set_nums, scroll_id);
-
-    //texturing_operation(fst_img, sec_img, k, fst_path, img, debug,
-    //                    out_path_details, set_nums);
 
     std::cout << "End texture" << std::endl;
   }
@@ -1137,13 +967,7 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
 
 
 
-  for (int pok_idx = st_idx + 1;
-       pok_idx <= fin_idx; ++pok_idx) {
-    //if (checkpoint_num != 0) {
-    //  load_from_checkpoint(i, checkpoint_num, nm, pred_pts, pred_pts_raw,
-    //                       tot_dist, big_path, out_path, fst_img_pok,
-    //                       sec_img_pok);
-    //}
+  for (int pok_idx = st_idx + 1; pok_idx <= fin_idx; ++pok_idx) {
     std::cout << "Cur raw " << nums[pok_idx] << std::endl;
     std::cout << "Start binary mask processing" << std::endl;
     int slice_num = nums[pok_idx];
@@ -1170,8 +994,6 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
     if (debug) {
       cv::imwrite(std::filesystem::path(out_path_details) / (scroll_id + "." + get_num(slice_num) + ".skelet.png"),
           skelet);
-
-      //cv::imwrite(std::filesystem::path(out_path_details) / ("skelet" + std::to_string(slice_num) + ".png"), skelet);
     }
     auto comp_res = find_comp(skelet);
 
@@ -1184,10 +1006,6 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
     std::vector<std::vector<cv::Point>> paths;
 
     delete_big_cycles(skelet, comp_res, false);
-
-    //if (debug) {
-    //  cv::imwrite(out_path + "skelet_new" + std::to_string(slice_num) + ".png", skelet);
-    //}
 
     delete_branch_points(comp_res, skelet, false);
 
@@ -1206,10 +1024,6 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
       cv::imwrite(std::filesystem::path(out_path_details) / (scroll_id + "." + get_num(slice_num) + ".skelet_last.png"),
             skelet);
     }
-
-
-
-    //cv::imwrite(std::filesystem::path(out_path_details) / ("skelet_last" + std::to_string(slice_num) + ".png"), skelet);
 
     std::cout << "Start skelet conn reconstruction" << std::endl;
 
@@ -1265,7 +1079,6 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
     int fin_pos = -1;
     int cnt_raw = 0;
     bool empty_path = false;
-    //break;
 
     while (!can_finish) {
 
@@ -1377,9 +1190,7 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
           }
         }
 
-        if (debug) {    //if (debug) {
-    //  cv::imwrite(out_path + "skelet_new" + std::to_string(slice_num) + ".png", skelet);
-    //}ish? " << mn_norm << ' '
+        if (debug) {    
          std::cout << "Can finish? "  << scroll_const.near_to_fin << std::endl;
         }
 
@@ -1681,10 +1492,6 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
       if (debug) {
         cv::imwrite(std::filesystem::path(out_path_details) / (scroll_id + "." + get_num(slice_num) + "." + std::to_string(cnt_raw - 1) + "_backup.png"),
           pos_img);
-
-        //cv::imwrite(std::filesystem::path(out_path_details) / ("pos_img_small" + std::to_string(slice_num) + "_" +
-        //                std::to_string(cnt_raw) + ".png"),
-        //            pos_img_small);
       }
 
       if (backup_idx == -1) {
@@ -1818,7 +1625,6 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
       r_text = slice_count;
     } else {
       r_text = nums[pok_idx + 1];
-      //r_text = i + scroll_const.step;
     }
 
     if (debug) {
@@ -1836,10 +1642,6 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
       if (debug) {
         std::cout << w << std::endl;
       }
-      /*texturing_operation(cv::Mat &fst_img, cv::Mat &sec_img,
-                         int slice_num, std::vector<cv::Point2d> &fst_path,
-                         bool debug, std::string raw_path,
-                         std::string out_path, const std::set<int>& nums)*/
       texturing_operation(fst_img, sec_img, w, fst_path, debug,
                           raw_paths[w], out_path_details, set_nums, scroll_id);
       std::cout << "Post texture " << w << std::endl;
@@ -1852,10 +1654,6 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
         cv::imwrite(std::filesystem::path(out_path_details) / (scroll_id + ".2." + get_num(slice_num) + "_nonalign.png"),
                   image_to_int(sec_img));
       }
-      //cv::imwrite(std::filesystem::path(out_path_details) / ("fst_img_" + std::to_string(slice_num) + ".png"),
-      //            image_to_int(fst_img));
-      //cv::imwrite(std::filesystem::path(out_path_details) / ("sec_img_" + std::to_string(slice_num) + ".png"),
-      //            image_to_int(sec_img));
     }
     if (debug) {
       std::cout << "Post texture" << std::endl;
@@ -1874,43 +1672,4 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
   cv::imwrite(std::filesystem::path(out_path_details) / (scroll_id + ".2." + get_num(st_num) + "_" +
                   get_num(fin_num) + ".nonalign.png"),
               image_to_int(sec_img));
-
-
-  /*
-  cv::imwrite(std::filesystem::path(out_path_result) / (scroll_id + ".2." + std::to_string(st_num) + "_" +
-                  std::to_string(fin_num) + ".tif"),
-              sec_img);
-  cv::imwrite(std::filesystem::path(out_path_result) / (scroll_id + ".1." + std::to_string(st_num) + "_" +
-                  std::to_string(fin_num) + ".tif"),
-              fst_img);
-  cv::imwrite(std::filesystem::path(out_path_result) / (scroll_id + ".2." + std::to_string(st_num) + "_" +
-                  std::to_string(fin_num) + ".tif"),
-              sec_img);
-  */
-  /* 
-  if (prev_checkpoint_num != 0) {
-    cv::Mat fst_img_int = image_to_int(fst_img);
-    cv::Mat sec_img_int = image_to_int(sec_img);
-
-    for (int i = prev_checkpoint_num - step; i < fst_img_pok.size[0]; ++i) {
-      for (int j = 0; j < fst_img_pok.size[1]; ++j) {
-        fst_img_pok.at<uint8_t>(i, j) = fst_img_int.at<uint8_t>(i, j);
-        sec_img_pok.at<uint8_t>(i, j) = sec_img_int.at<uint8_t>(i, j);
-      }
-    }
-    cv::imwrite(out_path + "new_fst_img_" + std::to_string(st_num) + "_" +
-                    std::to_string(fin_num) + ".png",
-                fst_img_pok);
-    cv::imwrite(out_path + "new_sec_img_" + std::to_string(st_num) + "_" +
-                    std::to_string(fin_num) + ".png",
-                sec_img_pok);
-  } else {
-    cv::imwrite(out_path + "fst_img_" + std::to_string(st_num) + "_" +
-                    std::to_string(fin_num) + ".png",
-                image_to_int(fst_img));
-    cv::imwrite(out_path + "sec_img_" + std::to_string(st_num) + "_" +
-                    std::to_string(fin_num) + ".png",
-                image_to_int(sec_img));
-  }
-  */
 }

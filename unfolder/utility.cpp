@@ -430,103 +430,103 @@ find_longest_path(const std::vector<std::vector<int>> &used, int idx,
 
 void dfs(cv::Point pt, std::vector<std::vector<int>> &used,
          std::vector<std::vector<int>> &nums,
-         std::vector<std::vector<int>> &used_pok,
+         std::vector<std::vector<int>> &used_cycle,
          std::vector<std::vector<cv::Point>> &cycle,
          std::vector<cv::Point> &st) {
-  used_pok[pt.x][pt.y] = 1;
+  used_cycle[pt.x][pt.y] = 1;
   int i = pt.x;
   int j = pt.y;
   st.push_back(pt);
   nums[pt.x][pt.y] = st.size() - 1;
-  if (used[i - 1][j] && used_pok[i - 1][j] == 1 &&
+  if (used[i - 1][j] && used_cycle[i - 1][j] == 1 &&
       nums[i - 1][j] + 10 < st.size()) {
     cycle.push_back(
         std::vector<cv::Point>(st.begin() + nums[i - 1][j], st.end()));
   }
-  if (used[i - 1][j] && !used_pok[i - 1][j]) {
+  if (used[i - 1][j] && !used_cycle[i - 1][j]) {
     cv::Point pt;
     pt.x = i - 1;
     pt.y = j;
-    dfs(pt, used, nums, used_pok, cycle, st);
+    dfs(pt, used, nums, used_cycle, cycle, st);
   }
-  if (used[i + 1][j] && used_pok[i + 1][j] == 1 &&
+  if (used[i + 1][j] && used_cycle[i + 1][j] == 1 &&
       nums[i + 1][j] + 10 < st.size()) {
     cycle.push_back(
         std::vector<cv::Point>(st.begin() + nums[i + 1][j], st.end()));
   }
-  if (used[i + 1][j] && !used_pok[i + 1][j]) {
+  if (used[i + 1][j] && !used_cycle[i + 1][j]) {
     cv::Point pt;
     pt.x = i + 1;
     pt.y = j;
-    dfs(pt, used, nums, used_pok, cycle, st);
+    dfs(pt, used, nums, used_cycle, cycle, st);
   }
-  if (used[i][j - 1] && used_pok[i][j - 1] == 1 &&
+  if (used[i][j - 1] && used_cycle[i][j - 1] == 1 &&
       nums[i][j - 1] + 10 < st.size()) {
     cycle.push_back(
         std::vector<cv::Point>(st.begin() + nums[i][j - 1], st.end()));
   }
-  if (used[i][j - 1] && !used_pok[i][j - 1]) {
+  if (used[i][j - 1] && !used_cycle[i][j - 1]) {
     cv::Point pt;
     pt.x = i;
     pt.y = j - 1;
-    dfs(pt, used, nums, used_pok, cycle, st);
+    dfs(pt, used, nums, used_cycle, cycle, st);
   }
-  if (used[i][j + 1] && used_pok[i][j + 1] == 1 &&
+  if (used[i][j + 1] && used_cycle[i][j + 1] == 1 &&
       nums[i][j + 1] + 10 < st.size()) {
     cycle.push_back(
         std::vector<cv::Point>(st.begin() + nums[i][j + 1], st.end()));
   }
-  if (used[i][j + 1] && !used_pok[i][j + 1]) {
+  if (used[i][j + 1] && !used_cycle[i][j + 1]) {
     cv::Point pt;
     pt.x = i;
     pt.y = j + 1;
-    dfs(pt, used, nums, used_pok, cycle, st);
+    dfs(pt, used, nums, used_cycle, cycle, st);
   }
-  if (used[i - 1][j - 1] && used_pok[i - 1][j - 1] == 1 &&
+  if (used[i - 1][j - 1] && used_cycle[i - 1][j - 1] == 1 &&
       nums[i - 1][j - 1] + 10 < st.size()) {
     cycle.push_back(
         std::vector<cv::Point>(st.begin() + nums[i - 1][j - 1], st.end()));
   }
-  if (used[i - 1][j - 1] && !used_pok[i - 1][j - 1]) {
+  if (used[i - 1][j - 1] && !used_cycle[i - 1][j - 1]) {
     cv::Point pt;
     pt.x = i - 1;
     pt.y = j;
-    dfs(pt, used, nums, used_pok, cycle, st);
+    dfs(pt, used, nums, used_cycle, cycle, st);
   }
-  if (used[i - 1][j + 1] && used_pok[i - 1][j + 1] == 1 &&
+  if (used[i - 1][j + 1] && used_cycle[i - 1][j + 1] == 1 &&
       nums[i - 1][j + 1] + 10 < st.size()) {
     cycle.push_back(
         std::vector<cv::Point>(st.begin() + nums[i - 1][j + 1], st.end()));
   }
-  if (used[i - 1][j + 1] && !used_pok[i - 1][j + 1]) {
+  if (used[i - 1][j + 1] && !used_cycle[i - 1][j + 1]) {
     cv::Point pt;
     pt.x = i - 1;
     pt.y = j + 1;
-    dfs(pt, used, nums, used_pok, cycle, st);
+    dfs(pt, used, nums, used_cycle, cycle, st);
   }
-  if (used[i + 1][j - 1] && used_pok[i + 1][j - 1] == 1 &&
+  if (used[i + 1][j - 1] && used_cycle[i + 1][j - 1] == 1 &&
       nums[i + 1][j - 1] + 10 < st.size()) {
     cycle.push_back(
         std::vector<cv::Point>(st.begin() + nums[i + 1][j - 1], st.end()));
   }
-  if (used[i + 1][j - 1] && !used_pok[i + 1][j - 1]) {
+  if (used[i + 1][j - 1] && !used_cycle[i + 1][j - 1]) {
     cv::Point pt;
     pt.x = i + 1;
     pt.y = j - 1;
-    dfs(pt, used, nums, used_pok, cycle, st);
+    dfs(pt, used, nums, used_cycle, cycle, st);
   }
-  if (used[i + 1][j + 1] && used_pok[i + 1][j + 1] == 1 &&
+  if (used[i + 1][j + 1] && used_cycle[i + 1][j + 1] == 1 &&
       nums[i + 1][j + 1] + 10 < st.size()) {
     cycle.push_back(
         std::vector<cv::Point>(st.begin() + nums[i + 1][j + 1], st.end()));
   }
-  if (used[i + 1][j + 1] && !used_pok[i + 1][j + 1]) {
+  if (used[i + 1][j + 1] && !used_cycle[i + 1][j + 1]) {
     cv::Point pt;
     pt.x = i + 1;
     pt.y = j + 1;
-    dfs(pt, used, nums, used_pok, cycle, st);
+    dfs(pt, used, nums, used_cycle, cycle, st);
   }
-  used_pok[i][j] = 2;
+  used_cycle[i][j] = 2;
   st.pop_back();
 }
 
@@ -536,9 +536,9 @@ find_cycle(std::vector<std::vector<int>> used, int idx, cv::Point pt) {
   std::vector<std::vector<int>> nums(used.size(),
                                      std::vector<int>(used[0].size()));
   std::vector<cv::Point> st;
-  std::vector<std::vector<int>> used_pok(used.size(),
+  std::vector<std::vector<int>> used_cycle(used.size(),
                                          std::vector<int>(used[0].size()));
-  dfs(pt, used, nums, used_pok, cycle, st);
+  dfs(pt, used, nums, used_cycle, cycle, st);
   return cycle;
 }
 

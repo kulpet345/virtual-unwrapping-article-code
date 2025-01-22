@@ -96,8 +96,8 @@ bool case_mid_nearest(std::vector<std::vector<cv::Point>> &paths,
                       std::vector<std::vector<double>> paths_dist);
 
 void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_order,
-                    std::string out_path_details, std::vector<std::string> mask_paths, std::vector<int> nums, int& st_idx, int fin_idx,
-                    int slice_count, std::string scroll_id);
+                    std::string out_path_details, std::vector<std::string> mask_paths, std::vector<int> nums,
+                    int& st_idx, int fin_idx, int slice_count, std::string scroll_id);
 
 void write_pred_pts(std::vector<cv::Point2d> &pred_pts,
                     std::vector<cv::Point> &pred_pts_raw, int st_num,

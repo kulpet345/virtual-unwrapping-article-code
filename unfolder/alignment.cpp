@@ -183,12 +183,10 @@ void spiral_rec_nearest(int st_idx, int fin_idx,
            ++cur) {
         out << cur << ' '
             << (pts[j] + (pts[j + 1] - pts[j]) * (cur - new_pos[j]) /
-                             (new_pos[j + 1] - new_pos[j]))
-                   .x
+                             (new_pos[j + 1] - new_pos[j])).x
             << ' '
             << (pts[j] + (pts[j + 1] - pts[j]) * (cur - new_pos[j]) /
-                             (new_pos[j + 1] - new_pos[j]))
-                   .y
+                             (new_pos[j + 1] - new_pos[j])).y
             << "\n";
         int r_bound = 0;
         if (i + st_idx != fin_idx) {

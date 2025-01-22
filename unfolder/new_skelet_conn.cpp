@@ -819,119 +819,118 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
 
 
   
-  cv::Mat skelet = cv::Mat::zeros(img.size[0], img.size[1], CV_8UC1);
-  cv::ximgproc::thinning((img > 0) * 255, skelet,
-                         cv::ximgproc::THINNING_GUOHALL);
+    cv::Mat skelet = cv::Mat::zeros(img.size[0], img.size[1], CV_8UC1);
+    cv::ximgproc::thinning((img > 0) * 255, skelet,
+                          cv::ximgproc::THINNING_GUOHALL);
     if (debug) {
-    cv::imwrite(std::filesystem::path(out_path_details) / (scroll_id + "." + get_num(st_num) + ".skelet.png"),
-                skelet);
-  }
-  delete_skelet_borders(skelet);
-  auto comp_res = find_comp(skelet);
+      cv::imwrite(std::filesystem::path(out_path_details) / (scroll_id + "." + get_num(st_num) + ".skelet.png"),
+                  skelet);
+    }
+    delete_skelet_borders(skelet);
+    auto comp_res = find_comp(skelet);
 
-  if (swap_order) {
-    swap_procedure(comp_res.comps, comp_res.used, comp_res.cnt);
-  }
+    if (swap_order) {
+      swap_procedure(comp_res.comps, comp_res.used, comp_res.cnt);
+    }
 
-  if (debug) {
-    std::cout << "Comps size" << comp_res.comps.size() << ' ' << comp_res.cnt
-              << std::endl;
-  }
+    if (debug) {
+      std::cout << "Comps size" << comp_res.comps.size() << ' ' << comp_res.cnt
+                << std::endl;
+    }
 
-  delete_big_cycles(skelet, comp_res, true);
-  delete_branch_points(comp_res, skelet, true);
+    delete_big_cycles(skelet, comp_res, true);
+    delete_branch_points(comp_res, skelet, true);
 
 
-  if (debug) {
-    cv::imwrite(std::filesystem::path(out_path_details) / (scroll_id + "." + get_num(st_num) + ".skelet_last.png"),
-            skelet);
+    if (debug) {
+      cv::imwrite(std::filesystem::path(out_path_details) / (scroll_id + "." + get_num(st_num) + ".skelet_last.png"),
+              skelet);
 
-  }
-  comp_res = find_comp(skelet);
+    }
+    comp_res = find_comp(skelet);
 
-  if (swap_order) {
-    swap_procedure(comp_res.comps, comp_res.used, comp_res.cnt);
-  }
+    if (swap_order) {
+      swap_procedure(comp_res.comps, comp_res.used, comp_res.cnt);
+    }
 
-  auto paths = collect_paths(comp_res, true, debug);
+    auto paths = collect_paths(comp_res, true, debug);
 
-  
+    
 
-  std::vector<bool> us_pth(paths.size());
-  PathPos st_pos = find_st_path_st_slice_cand(paths);
-  if (st_pos.order == PathOrder::reverse) {
-    std::reverse(paths[st_pos.idx].begin(), paths[st_pos.idx].end());
-  }
-  us_pth[st_pos.idx] = true;
-  big_path = paths[st_pos.idx];
-  auto raw = image_to_int(
-      read_tif(raw_paths[st_idx], 64));
+    std::vector<bool> us_pth(paths.size());
+    PathPos st_pos = find_st_path_st_slice_cand(paths);
+    if (st_pos.order == PathOrder::reverse) {
+      std::reverse(paths[st_pos.idx].begin(), paths[st_pos.idx].end());
+    }
+    us_pth[st_pos.idx] = true;
+    big_path = paths[st_pos.idx];
+    auto raw = image_to_int(read_tif(raw_paths[st_idx], 64));
 
     for (int i = 0; i < us_pth.size() - 1; ++i) {
       auto [finish, idx_pos] =
-        collect_nearest_paths_st_slice_cand(big_path, paths, us_pth);
+          collect_nearest_paths_st_slice_cand(big_path, paths, us_pth);
 
       if (finish) {
         break;
       }
 
-    st_slice_choose_best_cand(idx_pos, paths, big_path, raw, us_pth);
-  }
+      st_slice_choose_best_cand(idx_pos, paths, big_path, raw, us_pth);
+    }
 
-  int len_paths = 0;
-  for (int i = 0; i < comp_res.cnt; ++i) {
-    len_paths += comp_res.comps[i].size();
-  }
-  for (int i = 0; i < paths.size(); ++i) {
-    std::cout << i << ' ' << paths[i].size() << ' ' << us_pth[i] << std::endl;
-  }
+    int len_paths = 0;
+    for (int i = 0; i < comp_res.cnt; ++i) {
+      len_paths += comp_res.comps[i].size();
+    }
+    for (int i = 0; i < paths.size(); ++i) {
+      std::cout << i << ' ' << paths[i].size() << ' ' << us_pth[i] << std::endl;
+    }
 
-  std::cout << "Len-plen " << big_path.size() << ' ' << len_paths << std::endl;
+    std::cout << "Len-plen " << big_path.size() << ' ' << len_paths << std::endl;
 
-  if (big_path.size() >= 0.95 * len_paths) {
-    seg_st = true;
-  } else {
-    ++st_idx;
-    continue;
-  }
+    if (big_path.size() >= 0.95 * len_paths) {
+      seg_st = true;
+    } else {
+      ++st_idx;
+      continue;
+    }
 
-  double dst = 0;
-  double tot_dist = 0;
-  for (int i = 1; i < big_path.size(); ++i) {
-    dst += cv::norm(big_path[i] - big_path[i - 1]);
-  }
-  samples_count = int(trunc(dst));
-  tot_dist = dst;
+    double dst = 0;
+    double tot_dist = 0;
+    for (int i = 1; i < big_path.size(); ++i) {
+      dst += cv::norm(big_path[i] - big_path[i - 1]);
+    }
+    samples_count = int(trunc(dst));
+    tot_dist = dst;
 
-  if (debug) {
-    draw_result_st(img, big_path, out_path_details, st_num, scroll_id);
-  }
+    if (debug) {
+      draw_result_st(img, big_path, out_path_details, st_num, scroll_id);
+    }
 
-  std::vector<double> prev_idx;
-  std::vector<cv::Point2d> prev_path;
+    std::vector<double> prev_idx;
+    std::vector<cv::Point2d> prev_path;
 
-  std::vector<cv::Point2d> fst_path;
-  int prev_sz = 0;
+    std::vector<cv::Point2d> fst_path;
+    int prev_sz = 0;
 
-  fst_path = uniform_sampling(big_path, samples_count);
-  fst_path = gaus_smooth(fst_path);
+    fst_path = uniform_sampling(big_path, samples_count);
+    fst_path = gaus_smooth(fst_path);
 
-  pred_pts = fst_path;
-  pred_pts_raw = big_path;
-  pred_tot_dist = tot_dist;
+    pred_pts = fst_path;
+    pred_pts_raw = big_path;
+    pred_tot_dist = tot_dist;
 
-  write_pred_pts(fst_path, big_path, st_num, out_path_details, scroll_id);
+    write_pred_pts(fst_path, big_path, st_num, out_path_details, scroll_id);
 
-  if (debug) {
-  cv::Mat pred_pts_img =
-    cv::Mat::zeros(skelet.size[0], skelet.size[1], CV_8UC1);
-  for (int k = 0; k < fst_path.size(); ++k) {
-    pred_pts_img.at<uint8_t>(fst_path[k].x, fst_path[k].y) = 255;
-  }
+    if (debug) {
+      cv::Mat pred_pts_img =
+        cv::Mat::zeros(skelet.size[0], skelet.size[1], CV_8UC1);
+      for (int k = 0; k < fst_path.size(); ++k) {
+        pred_pts_img.at<uint8_t>(fst_path[k].x, fst_path[k].y) = 255;
+      }
 
-  cv::imwrite(std::filesystem::path(out_path_details) / (scroll_id + "." + get_num(st_num) + "_resample" + ".png"),
-              pred_pts_img);
-  }
+      cv::imwrite(std::filesystem::path(out_path_details) / (scroll_id + "." + get_num(st_num) + "_resample" + ".png"),
+                  pred_pts_img);
+    }
   }
 
 
@@ -960,26 +959,17 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
     std::cout << "End texture" << std::endl;
   }
 
-  cv::Mat fst_img_pok, sec_img_pok;
-
-
-
-
-
-
-  for (int pok_idx = st_idx + 1; pok_idx <= fin_idx; ++pok_idx) {
-    std::cout << "Cur raw " << nums[pok_idx] << std::endl;
+  for (int slice_idx = st_idx + 1; slice_idx <= fin_idx; ++slice_idx) {
+    std::cout << "Cur raw " << nums[slice_idx] << std::endl;
     std::cout << "Start binary mask processing" << std::endl;
-    int slice_num = nums[pok_idx];
+    int slice_num = nums[slice_idx];
     double tot_dist = 0;
     cv::Mat img;
-    img = cv::imread(mask_paths[pok_idx],
-                     cv::IMREAD_GRAYSCALE);
+    img = cv::imread(mask_paths[slice_idx], cv::IMREAD_GRAYSCALE);
 
     std::map<cv::Point, int, CompClass> map_pts, map_pts_fixed;
     for (int j = 0; j < pred_pts.size(); ++j) {
-      map_pts[cv::Point(int(round(pred_pts[j].x)), int(round(pred_pts[j].y)))] =
-          j;
+      map_pts[cv::Point(int(round(pred_pts[j].x)), int(round(pred_pts[j].y)))] = j;
     }
     auto pred_pts_fixed = resample_fixed(pred_pts, 1);
     for (int j = 0; j < pred_pts_fixed.size(); ++j) {
@@ -1029,8 +1019,7 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
 
     std::vector<bool> us_pth(paths.size());
 
-    std::vector<std::pair<double, int>> dst_idx =
-        calc_min_dist(paths, pred_pts);
+    std::vector<std::pair<double, int>> dst_idx = calc_min_dist(paths, pred_pts);
 
     std::vector<double> pref_dst(pred_pts.size());
     pref_dst[0] = 0;
@@ -1624,7 +1613,7 @@ void skelet_conn_new(std::vector<std::string> raw_paths, bool debug, bool swap_o
     if (slice_num == fin_num) {
       r_text = slice_count;
     } else {
-      r_text = nums[pok_idx + 1];
+      r_text = nums[slice_idx + 1];
     }
 
     if (debug) {
